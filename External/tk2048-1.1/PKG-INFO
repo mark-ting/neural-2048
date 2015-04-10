@@ -1,0 +1,127 @@
+Metadata-Version: 1.1
+Name: tk2048
+Version: 1.1
+Summary: tk2048 - Python3-Tkinter port of Gabriele Cirulli's 2048 famous Game
+Home-page: https://github.com/tarball69/tk2048
+Author: Raphaël SEBAN
+Author-email: motus@laposte.net
+License: 
+Licensed under GNU General Public License v3.
+    
+Download-URL: https://github.com/tarball69/tk2048
+Description: 
+        
+        tk2048 - Python3-Tkinter port of Gabriele Cirulli's 2048 famous Game.
+        
+        This game is a **freefullware** (see below).
+        
+        Copyright
+        ---------
+        
+        Copyright (c) 2014 Raphaël Seban <motus@laposte.net>
+        
+        License
+        -------
+        
+        This software is licensed under **GNU GPL General Public License v3**.
+        
+        New in v1.1
+        -------------
+        
+        * added new high-score feature;
+        
+        * added new 'New Game' button;
+        
+        * added new GridAnimation class;
+        
+        Quick start
+        -----------
+        
+        MS-Windows users
+        ----------------
+        
+        Simply double-click on **game.py** file and play.
+        
+        UNIX/Linux users
+        ----------------
+        
+        Click on **game.py** file if it has the executable sticky bit on or
+        open a shell console and launch file:
+        
+        ::
+        
+            $ python3 game.py
+        
+        What is a freefullware?
+        -----------------------
+        
+        A **freefullware** is a new kind of software:
+        
+        * Free as in Freedom;
+        * Free of charge (gratis);
+        * Ad-free (no advertisement at all);
+        * Donate-free (no 'Donate' button at all);
+        * 100% virus-free;
+        * no counterpart at all;
+        * really absolutely free;
+        
+        Just get it and enjoy.
+        
+        That's all, folks!
+        
+        Bug report
+        ----------
+        
+        In order to **track bugs** and fix them correctly, we'd like to hear
+        from you.
+        
+        **If you encountered any problem** during the use of `tk2048`,
+        please leave us a comment and tell us:
+        
+        * environment:
+            * which platform? (Windows, macOS, Linux)
+            * which Python version? (2.7+, 3.2+)
+            * which tk2048 version?
+            * tkinter installed correctly? (yes/no)
+        
+        * traceback (optional):
+            * could you copy/paste the console error text, please?
+            * could you tell us few words about what happened?
+        
+        **Whatever happened**, we'd like to know about it.
+        
+        You will find an open issue **"It did *NOT* work for me!"** at:
+        
+        https://github.com/tarball69/tk2048/issues/1
+        
+        **Thank you for contributing** to make `tk2048` a cool game for
+        everyone.
+        
+        
+Keywords: tkinter,game,2048
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Other Environment
+Classifier: Environment :: Win32 (MS Windows)
+Classifier: Environment :: X11 Applications
+Classifier: Environment :: X11 Applications :: Gnome
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: OS Independent
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Games/Entertainment
+Classifier: Topic :: Games/Entertainment :: Board Games
+Classifier: Topic :: Games/Entertainment :: Puzzle Games
+Requires: Tkinter
