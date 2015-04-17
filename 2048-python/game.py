@@ -13,8 +13,9 @@ class Obj2048:
     def __str__(self):
         return str(self.val)
     
-class Grid2048:
-    def make_zero_grid(self):
+class Board2048:
+    @staticmethod
+    def make_zero_grid():
         grid = []
         for i in gs:
             temp_list = []
@@ -26,7 +27,8 @@ class Grid2048:
     ## copies g into a new grid
     ## since these are 2D lists, we need to use this rather than just x.copy()
     ## otherwise changing elements of new grid will overwrite old grid
-    def copy_grid(self, g):
+    @staticmethod
+    def copy_grid(g):
         grid = []
         for i in gs:
             grid.append(list(g[i]))
@@ -34,7 +36,7 @@ class Grid2048:
     
     def __init__(self, g=None):
         if g == None:
-            self.grid = self.make_zero_grid()
+            self.grid = Board2048.make_zero_grid()
             two1 = (rand.randrange(0,num_rc), rand.randrange(0,num_rc))
             two2 = (rand.randrange(0,num_rc), rand.randrange(0,num_rc))
             while two1 == two2:
@@ -43,7 +45,7 @@ class Grid2048:
             self.grid[two2[0]][two2[1]] = Obj2048(2)
         else:
             # Copy grid over, so as to not have interference between two objects
-            self.grid = self.copy_grid(g)
+            self.grid = Board2048.copy_grid(g)
         self.gameOver = False
         self.score = 0
         
@@ -74,7 +76,8 @@ class Grid2048:
         
     ## Gets location adjacent to (x, y) in direction dir
     ## 0 = right, 1 = up, 2 = left, 3 = down
-    def get_adjacent_loc(self, x, y, dir):
+    @staticmethod
+    def get_adjacent_loc(x, y, dir):
         loc = {
             0 : (x, y + 1),
             1 : (x - 1, y),
@@ -89,7 +92,7 @@ class Grid2048:
     def can_move(self, dir):
         for i in gs:
             for j in gs:
-                loc = self.get_adjacent_loc(i, j, dir)
+                loc = Board2048.get_adjacent_loc(i, j, dir)
                 if loc == None:
                     continue
                 if self.grid[i][j] != 0 and\
@@ -119,14 +122,14 @@ class Grid2048:
         if (not self.can_move(dir)):
             return False
         self.shift(dir)
-        grid = self.copy_grid(self.grid)
+        grid = Board2048.copy_grid(self.grid)
         
         for i in gs:
             for j in gs:
                 if self.grid[i][j] == 0:
                     continue
                 num = self.grid[i][j]
-                loc = self.get_adjacent_loc(i, j, dir);
+                loc = Board2048.get_adjacent_loc(i, j, dir);
                 if loc == None:
                     continue
                 new_num = self.grid[loc[0]][loc[1]];
@@ -152,7 +155,7 @@ class Grid2048:
         for step in gs:
             for i in gs:
                 for j in gs:
-                    loc = self.get_adjacent_loc(i, j, dir)
+                    loc = Board2048.get_adjacent_loc(i, j, dir)
                     if loc == None:
                         continue
                     num = self.grid[loc[0]][loc[1]]
