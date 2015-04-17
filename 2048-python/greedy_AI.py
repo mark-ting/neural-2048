@@ -9,7 +9,7 @@ class GreedyAI:
         if b == None:
             self.board = Board2048()
         else:
-            self.board = g
+            self.board = b
         self.iters = iter
 
     ## computes all future outcomes up to a certain depth,
@@ -29,7 +29,7 @@ class GreedyAI:
             # move it in the given direction
             new_board.move_without_spawn(i)
             # get tree of moves one level down
-            sub_board_arr = GreedyAI.calc_move(new_board)[0]
+            sub_board_arr = GreedyAI.calc_move(new_board, iter - 1)[0]
             # get scores (we maximize this)
             scores = list(map(lambda b: b.score, sub_board_arr))
             max_s = max(scores)
@@ -47,7 +47,7 @@ class GreedyAI:
         if(self.board.game_over()):
             return False
         # calculate AI's move
-        dir = calc_move(self.board, self.iters)[1]
+        dir = GreedyAI.calc_move(self.board, self.iters)[1]
         # try to move in that direction
         if(self.board.move(dir)):
             return True
