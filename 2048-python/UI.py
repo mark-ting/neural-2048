@@ -4,9 +4,8 @@ from game import *
 import msvcrt
 import time
 
-g = Grid2048()
-print(str(g))
-print(num_rc)
+board = Board2048()
+print(str(board))
 
 """
     
@@ -30,32 +29,32 @@ def kbfunc():
 while True:
 
     #acquire the keyboard hit if exists
-    x = kbfunc() 
+    evt = kbfunc() 
 
     #if we got a keyboard hit
-    if x != False:
-        y = x.decode()
-        if y == 'd':
+    if evt != False:
+        ch = evt.decode()
+        if ch == 'd':
             # key is d; move right
-            g.move(0)
-            print(str(g))
-        elif y == 'w':
+            board.move(0)
+            print(str(board))
+        elif ch == 'w':
             # key is w; move up
-            g.move(1)
-            print(str(g))
-        elif y == 'a':
+            board.move(1)
+            print(str(board))
+        elif ch == 'a':
             # key is a; move left
-            g.move(2)
-            print(str(g))
-        elif y == 's':
+            board.move(2)
+            print(str(board))
+        elif ch == 's':
             # key is s; move down
-            g.move(3)
-            print(str(g))
-        elif y == ' ':
+            board.move(3)
+            print(str(board))
+        elif ch == ' ':
             # key is spacebar; stop game
-            print(str(g))
-            print("Your score is: " + str(g.score))
+            print(str(board))
+            print("Your score is: " + str(board.score))
             break
-        elif y == 'z':
+        elif ch == 'z':
             # print score
-            print("Your score is: " + str(g.score))
+            print("Your score is: " + str(board.score))
