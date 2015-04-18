@@ -35,7 +35,7 @@ class GreedyAI:
             max_s = max(scores)
             if(max_s > dir[0]):
                 dir = (max_s, i)
-            board_arr.append(sub_board_arr)
+            board_arr += sub_board_arr
         return (board_arr, dir[1])
             
     ## moves current instance
@@ -57,3 +57,11 @@ class GreedyAI:
                 return False
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
+        
+ 
+
+ai = GreedyAI(iter=2)
+while(not ai.board.game_over()):
+    print(ai.board)
+    ai.move()
+print(ai.board)
