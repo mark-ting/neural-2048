@@ -5,9 +5,9 @@ class GreedyAI:
     ## iter is the number of turns the AI looks into the future
     ## this AI is very simple, it will try to maximize score
     ## it also does not take random spawns into account
-    def __init__(self, b=None, iter=1):
+    def __init__(self, b=None, iter=1, s=None):
         if b == None:
-            self.board = Board2048()
+            self.board = Board2048(seed=s)
         else:
             self.board = b
         self.iters = iter
@@ -25,7 +25,7 @@ class GreedyAI:
         dir = (-1, 0)
         for i in gs:
             # make new Board2048 object so we don't change original copy
-            new_board = Board2048(Board2048.copy_grid(board.grid))
+            new_board = Board2048(np.copy(board.grid))
             # move it in the given direction
             new_board.move_without_spawn(i)
             # get tree of moves one level down
@@ -58,10 +58,11 @@ class GreedyAI:
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
         
- 
 
-ai = GreedyAI(iter=2)
+""" Some testing code, which demonstrates RNG seeding
+ai = GreedyAI(iter=2, s=1618)
 while(not ai.board.game_over()):
     print(ai.board)
     ai.move()
 print(ai.board)
+print("Score = " + str(ai.board.score))"""
