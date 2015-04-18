@@ -1,10 +1,14 @@
 from game import *
 
 class GreedyAI:
-    ## b is a Board2048 object that the AI will try to solve
-    ## iter is the number of turns the AI looks into the future
-    ## this AI is very simple, it will try to maximize score
-    ## it also does not take random spawns into account
+    """ A greedy algorithm that tries to optimize score
+    
+        b is a Board2048 object that the AI will try to solve
+        iter is the number of turns the AI looks into the future
+        This AI is very simple, it will try to maximize score over a fixed
+        number of turns, without taking any other factors into account.
+        It also does not take random spawns into account
+    """
     def __init__(self, b=None, iter=1, s=None):
         if b == None:
             self.board = Board2048(seed=s)
@@ -12,12 +16,14 @@ class GreedyAI:
             self.board = b
         self.iters = iter
 
-    ## computes all future outcomes up to a certain depth,
-    ## then returns a tuple consisting of a list of all board outcomes,
-    ## plus the direction of motion yielding the maximum score across all outcomes
-    ## does not take random spawns into account
+    """ Computes all future outcomes up to a certain depth
+    
+        Returns a tuple consisting of a list of all board outcomes,
+        plus the direction of motion yielding the maximum score across all 
+        outcomes. Does not take random spawns into account
+    """
     @staticmethod
-    def calc_move(board, iter):
+    def _calc_move(board, iter):
         if iter == 0:
             return ([board], 0)
         board_arr = []
@@ -29,7 +35,7 @@ class GreedyAI:
             # move it in the given direction
             new_board.move_without_spawn(i)
             # get tree of moves one level down
-            sub_board_arr = GreedyAI.calc_move(new_board, iter - 1)[0]
+            sub_board_arr = GreedyAI._calc_move(new_board, iter - 1)[0]
             # get scores (we maximize this)
             scores = list(map(lambda b: b.score, sub_board_arr))
             max_s = max(scores)
@@ -38,16 +44,18 @@ class GreedyAI:
             board_arr += sub_board_arr
         return (board_arr, dir[1])
             
-    ## moves current instance
-    ## returns true if AI's move was possible
-    ## if AI's move wasn't possible, tries to move in the following order:
-    ## right, then up, then left, then down
+    """ Moves the board according to the greedy AI's algorithm.
+    
+        Returns true if AI's move was possible
+        If AI's move wasn't possible, tries to move in the following order:
+        right, then up, then left, then down
+    """
     def move(self):
         # game is over; do nothing
         if(self.board.game_over()):
             return False
         # calculate AI's move
-        dir = GreedyAI.calc_move(self.board, self.iters)[1]
+        dir = GreedyAI._calc_move(self.board, self.iters)[1]
         # try to move in that direction
         if(self.board.move(dir)):
             return True
@@ -57,12 +65,3 @@ class GreedyAI:
                 return False
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
-        
-
-""" Some testing code, which demonstrates RNG seeding
-ai = GreedyAI(iter=2, s=1618)
-while(not ai.board.game_over()):
-    print(ai.board)
-    ai.move()
-print(ai.board)
-print("Score = " + str(ai.board.score))"""
