@@ -1,7 +1,7 @@
 import argparse
 from greedy_AI import GreedyAI
 
-# command line argument intake for runtime options
+""" Command-line argument intake for runtime options """
 parser = argparse.ArgumentParser(description="2048-python frontend",
                                  epilog="")
 
@@ -19,15 +19,15 @@ parser.add_argument('-v', '--verbosity', help="verbosity of log file",
 
 # parser.add_argument('--ui', help="Run the game in a terminal UI")
 
+""" List parsed variables """
 args = parser.parse_args()
 
-# parsed variables
 log = args.log
 verb = args.verbosity
 depth = args.searchdepth
 
 
-# main runtime
+""" Main runtime """
 def main():
 
     if args.ai:
@@ -42,25 +42,25 @@ def main():
             print(ai.board)
             ai.move()
     else:
-        # FIXME: make UI have a method that is called; else python is gonna cry
-        # runs manual UI (play using user input)
-        import UI.py
+        """ FIXME: make UI call a method; else python gonna cry """
+        import UI.py     # runs manual UI (play using user input)
 
 
-# logs an AI's game data to a text file
-def log_to_file(ai, file, verbosity=1, delimiter=None):
+""" Logs an AI's game run to a text file """
+def log_to_file(ai, file, verbosity, delimiter=None):
 
+    """ Output Turn and Score information """
+    if verbosity > 1:
+        file.write("TURN: " + str(ai.board.num_steps) + " | SCORE: " +
+                   str(ai.board.score) + "\n")
+
+    """ Output runtime board states """
     if verbosity > 0:
         file.write(str(ai.board))
         if delimiter:
             file.write(delimiter)
         else:
             file.write("--------------------\n\n")
-
-    # turn and score log
-    if verbosity > 1:
-        file.write("TURN: " + "###" + " | SCORE: " +
-                   str(ai.board.score) + "\n")
 
 
 main()
