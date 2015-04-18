@@ -2,38 +2,38 @@ from game import *
 
 # Keyboard listeners for the game (WINDOWS ONLY)
 import msvcrt
-import time
+
 
 class UI2048:
     """ Provides a very simple UI for the game 2048
-        
+
         Uses Board2048 as the game board, together with operations on that.
         Also uses Windows-specific keyboard listeners.
     """
     def __init__(self, board=None):
-        if board == None:
+        if board is None:
             self.board = Board2048()
         else:
             self.board = board
 
     """ Listens for a keystroke (Windows-specific)
-        
+
         Based off of
         http://stackoverflow.com/questions/11918999/key-listeners-in-python
     """
     @staticmethod
     def _kbfunc():
-        #this is boolean for whether the keyboard has bene hit
+        # this is boolean for whether the keyboard has been hit
         x = msvcrt.kbhit()
         if x:
-            #getch acquires the character encoded in binary ASCII
+            # getch acquires the character encoded in binary ASCII
             ret = msvcrt.getch()
         else:
             ret = False
         return ret
 
     """ Runs the UI.
-       
+
         Listens for keystrokes, then performs the following actions:
         ASDW -> move keystrokes
         SPACEBAR -> quit game (prints out score, # of turns passed)
@@ -41,14 +41,14 @@ class UI2048:
     """
     def run(self):
         print(str(self.board))
-        #infinite loop, which runs until SPACEBAR is pressed
+        # infinite loop, which runs until SPACEBAR is pressed
         while True:
 
-            #acquire the keyboard hit if exists
-            evt = UI2048._kbfunc() 
+            # acquire the keyboard hit if exists
+            evt = UI2048._kbfunc()
 
-            #if we got a keyboard hit
-            if evt != False:
+            # if we got a keyboard hit
+            if evt:
                 ch = evt.decode()
                 if ch == 'd':
                     # key is d; move right

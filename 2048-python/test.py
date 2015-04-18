@@ -9,12 +9,11 @@ t = Obj2048(2)
 f = Obj2048(4)
 e = Obj2048(8)
 s = Obj2048(16)
-x = Board2048(np.array([[f,t,s,t],[t,e,t,f],[e,t,f,t],[t,e,t,f]]))
+x = Board2048(np.array([[f, t, s, t], [t, e, t, f],
+                        [e, t, f, t], [t, e, t, f]]))
 print(x.can_move(0))
 print(x)
 
-
-        
 
 """ Some testing code, which demonstrates RNG seeding """
 ai = GreedyAI(iter=2, s=1618)

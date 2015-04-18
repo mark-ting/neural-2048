@@ -1,8 +1,9 @@
 from game import *
 
+
 class GreedyAI:
     """ A greedy algorithm that tries to optimize score
-    
+
         b is a Board2048 object that the AI will try to solve
         iter is the number of turns the AI looks into the future
         This AI is very simple, it will try to maximize score over a fixed
@@ -10,16 +11,16 @@ class GreedyAI:
         It also does not take random spawns into account
     """
     def __init__(self, b=None, iter=1, s=None):
-        if b == None:
+        if b is None:
             self.board = Board2048(seed=s)
         else:
             self.board = b
         self.iters = iter
 
     """ Computes all future outcomes up to a certain depth
-    
+
         Returns a tuple consisting of a list of all board outcomes,
-        plus the direction of motion yielding the maximum score across all 
+        plus the direction of motion yielding the maximum score across all
         outcomes. Does not take random spawns into account
     """
     @staticmethod
@@ -43,9 +44,9 @@ class GreedyAI:
                 dir = (max_s, i)
             board_arr += sub_board_arr
         return (board_arr, dir[1])
-            
+
     """ Moves the board according to the greedy AI's algorithm.
-    
+
         Returns true if AI's move was possible
         If AI's move wasn't possible, tries to move in the following order:
         right, then up, then left, then down
