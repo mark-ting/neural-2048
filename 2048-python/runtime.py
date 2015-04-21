@@ -8,11 +8,14 @@ parser = argparse.ArgumentParser(description="2048-python frontend",
 parser.add_argument('-a', '--ai', help="enable AI run mode",
                     action='store_true', default=False)
 
-parser.add_argument('-s', '--searchdepth', help="set AI search depth",
-                    type=int, choices=[1, 2, 3])
+parser.add_argument('-d', help="set AI search iterations",
+                    metavar="ITER", type=int, dest='searchdepth')
+
+parser.add_argument('-s', '--seed', help="custom seed for 2048 RNG placement",
+                    type=int)
 
 parser.add_argument('-l', '--log', help="outputs the AI run to a file",
-                    metavar="FILENAME", default="outlog")
+                    metavar="FILE", default="outlog")
 
 parser.add_argument('-v', '--verbosity', help="verbosity of log file",
                     type=int, choices=[1, 2], default=1)
@@ -22,18 +25,22 @@ parser.add_argument('-v', '--verbosity', help="verbosity of log file",
 """ List parsed variables """
 args = parser.parse_args()
 
+ai_enabled = args.ai
+depth = args.searchdepth
+seed = args.seed
+
+
 log = args.log
 verb = args.verbosity
-depth = args.searchdepth
 
 
 """ Main runtime """
 def main():
 
-    if args.ai:
-        ai = GreedyAI(iter=depth)
+    if ai_enabled:
+        ai = GreedyAI(iter=depth, s=seed)
 
-        if args.log:
+        if log:
             out = open(log + '.log', 'w')
 
         while not(ai.board.game_over()):

@@ -1,7 +1,6 @@
 """ This file holds a collection of possibly useful testing code. """
 from game import *
 from greedy_AI import *
-from UI import *
 import numpy as np
 
 
