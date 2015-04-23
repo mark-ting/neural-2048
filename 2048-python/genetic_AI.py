@@ -1,22 +1,35 @@
 from game import *
+import random as rand
 
-
-class GreedyAI:
-    """ A greedy algorithm that tries to optimize score
-
-        b is a Board2048 object that the AI will try to solve
-        iter is the number of turns the AI looks into the future
-        This AI is very simple, it will try to maximize score over a fixed
-        number of turns, without taking any other factors into account.
-        It also does not take random spawns into account
-    """
-    def __init__(self, b=None, iter=1, s=None):
+class GeneticAI:
+    def __init__(self, b=None, row_arr=None, col_arr = None, s=None):
         if b is None:
             self.board = Board2048(seed=s)
         else:
             self.board = b
-        self.iters = iter
+        if row_arr is None:
+            self.row_arr = DeepAI.rand_array()
+        else:
+            self.row_arr = row_arr
+        if col_arr is None:
+            self.col_arr = DeepAI.rand_array()
+        else:
+            self.col_arr = col_arr
+        self.best_row_arr = row_arr
+        self.best_col_arr = col_arr
 
+    @staticmethod
+    def rand_array():
+        arr = np.zeros(num_rc)
+        for i in gs:
+            arr[i] = rand.random() * 2 - 1
+        return arr
+        
+    def move():
+        dir_f = 
+        
+    def train(num_games):
+        
     """ Computes all future outcomes up to a certain depth
 
         Returns a tuple consisting of a list of all board outcomes,
@@ -47,22 +60,22 @@ class GreedyAI:
 
     """ Moves the board according to the greedy AI's algorithm.
 
-        Returns the move that the AI made, or -1 if the game was over.
+        Returns true if AI's move was possible
         If AI's move wasn't possible, tries to move in the following order:
         right, then up, then left, then down
     """
     def move(self):
         # game is over; do nothing
         if(self.board.game_over()):
-            return -1
+            return False
         # calculate AI's move
         dir = GreedyAI._calc_move(self.board, self.iters)[1]
         # try to move in that direction
         if(self.board.move(dir)):
-            return dir
+            return True
         # if the move failed, try all possible moves in order
         for dir in gs:
             if(self.board.move(dir)):
-                return dir
+                return False
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
