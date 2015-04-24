@@ -2,6 +2,7 @@
 from game import *
 from greedy_AI import *
 import numpy as np
+from genetic_AI import *
 
 z = Obj2048(0)
 t = Obj2048(2)
@@ -18,14 +19,15 @@ print(x.can_move(0))
 
 """ Some testing code, which demonstrates RNG seeding """
 
-"""
-ai = GreedyAI(iter=2, s=1618)
+
+ai = GeneticAI()
+ai.train(10000)
 while(not ai.board.game_over()):
     print(ai.board)
     ai.move()
 print(ai.board)
 print("Score = " + str(ai.board.score))
 
-"""
-ui = UI2048(x)
-ui.run()
+
+#ui = UI2048(x)
+#ui.run()
