@@ -4,7 +4,24 @@ from greedy_AI import *
 from UI import *
 import numpy as np
 from genetic_AI import *
+from parse_game import *
 
+#for i in range(10):
+    #print(parse_char(str(i)))
+
+#for i in range(ord('a'), ord('f') + 1):
+    #print(parse_char(chr(i)))
+
+s = "0123\n4567\n89ab\ncdef\naasdfasdfasf"
+#print(str(parse_nbyn(s)))
+
+datafile="C:\\Users\\Adam\\Dropbox\\Spring2015\\CS_51\\2048-heuristic-ai\\2048-ai-master\\training_data\\Output_1.txt"
+#print(parse_move("Move #2, move chosen down, current score=0"))
+x = load_datafile(datafile)
+print(str(x[5000][0].grid))
+print(x[5000][1])
+
+"""
 z = Obj2048(0)
 t = Obj2048(2)
 f = Obj2048(4)
@@ -16,11 +33,11 @@ print(x)
 print(x.can_move(0))
 #x.move(0)
 #print(x)
-
+"""
 
 """ Some testing code, which demonstrates RNG seeding """
 
-
+"""
 ai = GeneticAI()
 ai.train(10000)
 while(not ai.board.game_over()):
@@ -28,7 +45,7 @@ while(not ai.board.game_over()):
     ai.move()
 print(ai.board)
 print("Score = " + str(ai.board.score))
-
+"""
 
 #ui = UI2048(x)
 #ui.run()
