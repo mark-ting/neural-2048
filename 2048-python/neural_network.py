@@ -3,6 +3,11 @@
 # Contains the code for a Neural Network object -- call by instantiation.
 
 import numpy as np
+from propagation_functions import clamp_tanh as ctanh, \
+                                 tanh_prime as tanhp, \
+                                 clamp_expit as cexpit, \
+                                 expit_prime as expitp
+
 # from algorithms import clamp, d_clamp
 
 
@@ -33,7 +38,10 @@ class NeuralNetwork:
 
             # Add the arrays of weight values (1.0 right now) to the list
             self.weights.append(np.ones(ih_inter))
-            self.weights.append(np.ones(hh_total))
+
+            for i in range(n_layers - 1):
+                self.weights.append(np.ones(hh_inter))
+
             self.weights.append(np.ones(ho_inter))
 
         else:
@@ -46,12 +54,12 @@ class NeuralNetwork:
         self.prop_values.append(np.ones(n_in))
 
         for i in range(self.n_layers):
-            self.append(np.ones(n_hidden))
+            self.prop_values.append(np.ones(n_hidden))
 
         self.prop_values.append(np.ones(n_out))
 
         assert len(self.prop_values) == self.total_layers, \
-            "PV_ Size mismatch!"
+            "Propogation array size mismatch!"
 
     # TODO: MAKE THIS WORK.
     def propogate(self, inputs):
@@ -73,32 +81,59 @@ class NeuralNetwork:
 
         # TODO: MAKE EVALUATIONS ACTUALLY EVALUATE INSTEAD OF PRINTING!
 
-        # TODO: Evaluate input layer
-        for i in range(self.ni - 1):
-            (self.prop_values[0])[i] = inputs[i]    # assign input values
-            print(self.prop_values[0])[i]   # TEST STATEMENT--REMOVE!
+        # Evaluate input layer (assigns input values to propogation array)
+        print("Evaluating input layer")
+        for i in range(self.n_in - 1):
+            (self.prop_values[0])[i] = ctanh(inputs[i])
+            print((self.prop_values[0])[i])   # TEST STATEMENT--REMOVE!
 
         # TODO: Evaluate hidden layers
-        # Step 2: Hidden -> Hidden (if n_hidden > 1)
-        for i in range(self.n_layers):
-            for j in range(self.n_hidden):
 
-                print(self.prop_values[i])[j]   # TEST STATEMENT--REMOVE!
+        if self.n_layers != 0:
+            # Step 2: Hidden -> Hidden (if n_hidden > 1)
+            print("Evaluating hidden layers")
+            for i in range(self.n_layers):
 
-                if i == 0:
-                    previous_layer = self.ni - 1    # first hidden layer
-                else:
-                    previous_layer = self.hidden    # next hidden layers
+                for j in range(self.n_hidden):
 
-                for k in range(previous_layer):
-                    return k  # TODO: FIX THIS!
+                    signal = 0.0  # transmission
 
-        # TODO: Evaluate output layer
-        for i in range(self.n_out):
-            for j in range(self.hidden):
-                # needs to take in last hidden layer prop_value to trigger out!
-                print(self.prop_values[self.total_layers - 1])[i]  # TEST STATEMENT--REMOVE!
-                # Step 3: Hidden -> Output
+                    print((self.prop_values[i])[j])   # TEST STATEMENT--REMOVE!
+
+                    if i == 0:
+                        # first hidden layer takes input layer as previous
+                        previous_layer_size = self.n_in - 1
+                    else:
+                        # subsequent layers take hidden layers as previous
+                        previous_layer_size = self.n_hidden
+
+                    for k in range(previous_layer_size):
+                        signal += (self.weights[i + 1])[k] * \
+                                  (self.prop_values[0])[k]
+
+                    # TODO: DOUBLE CHECK THE MATH ON THIS
+                    (self.prop_values[i + 1])[j] = ctanh(signal)
+
+            # TODO: Evaluate output layer
+            print("Evaluating output layer")
+            for i in range(self.n_out):
+                signal = 0.0
+                for j in range(self.n_hidden):
+                    signal += (self.prop_values[i])[j]
+                    # TODO: ADD IN PROCESSING AND CLAMPING
+                    print((self.prop_values[self.total_layers - 1])[i])
+                    # TEST STATEMENT--REMOVE!
+                (self.prop_values[i + 1])[j] = ctanh(signal)
+
+        else:
+            print("Evaluating output layer")
+            for i in range(self.n_out):
+
+                signal == 0.0
+
+                for j in range(self.n_in):
+                    signal += (self.weights[self.total_layers - 1])[j]
+
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
