@@ -6,12 +6,12 @@ import numpy as np
 import scipy as sp
 
 
-def clamp_tanh(signal):
+def tanh(signal):
     return np.tanh(signal)
 
 
-def clamp_expit(signal):
-    return sp.expit(signal)
+def expit(signal):
+    return sp.special.expit(signal)
 
 
 def expit_prime(output):

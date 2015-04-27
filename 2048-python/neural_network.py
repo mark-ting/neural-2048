@@ -3,11 +3,7 @@
 # Contains the code for a Neural Network object -- call by instantiation.
 
 import numpy as np
-from propagation_functions import clamp_tanh as ctanh, \
-                                 tanh_prime as tanhp, \
-                                 clamp_expit as cexpit, \
-                                 expit_prime as expitp
-
+from propagation_functions import tanh, tanh_prime
 
 class NeuralNetwork:
     def __init__(self, n_in, n_out, n_hidden, n_layers, function_set=None):
@@ -33,8 +29,8 @@ class NeuralNetwork:
 
         else:
             # Default to hyperbolic tangent and its derivative
-            self.clamp = ctanh
-            self.grade = tanhp
+            self.clamp = tanh
+            self.grade = tanh_prime
 
         self.total_layers = n_layers + 2
         self.weights = []
@@ -108,6 +104,7 @@ class NeuralNetwork:
             # Step 2: Hidden -> Hidden (if n_hidden > 1)
             print("Evaluating hidden layers")
             for i in range(self.n_layers):
+                print("Layer " + str(i))
                 for j in range(self.n_hidden):
                     signal = 0.0  # transmission
 
@@ -154,11 +151,28 @@ class NeuralNetwork:
         self.weights = weights_in
 
     def save_weights(self):
-        """ Return weights as a list """
+        """ Return weights as a list1 """
         return self.weights
 
     def back_propogate(self, training_data, learn_rate, error_bound):
-        """ Iterate over each layer--starting with H-O to update the output
-            weights and then the input weights.
-        """
-        # update weight arrays #
+        return 0
+"""
+        last_layer = self.total_layers - 1
+        last_weight = self.total_layers - 2
+
+        if self.hidden_layer_exists:
+
+            # Update hidden-output weights
+            for i in range(n_out):
+                error = training_data[i] - self.prop_values[i]
+                weight = self.grade((self.prop_values[last_layer])[i])
+
+        else:
+            # Update hidden output weights
+        err = 0.0
+        for i in range(len(training_data)):
+            err = (training_data[i] - (self.prop_values[last_layer]) ** 2) / 2"""
+""" Iterate over each layer--starting with H-O to update the output
+    weights and then the input weights.
+"""
+# update weight arrays #
