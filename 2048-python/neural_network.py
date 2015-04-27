@@ -8,30 +8,45 @@ from propagation_functions import clamp_tanh as ctanh, \
                                  clamp_expit as cexpit, \
                                  expit_prime as expitp
 
-# from algorithms import clamp, d_clamp
-
 
 class NeuralNetwork:
-    def __init__(self, n_in, n_out, n_hidden, n_layers, algorithm_set):
+    def __init__(self, n_in, n_out, n_hidden, n_layers, function_set=None):
 
         """ Initialize number of nodes and layers """
-        self.n_in = n_in + 1    # add 1 to account for bias node
+        self.n_in = n_in + 1  # add 1 to account for bias node
         self.n_out = n_out
         self.n_hidden = n_hidden
         self.n_layers = n_layers
-        self.algorithm_set = algorithm_set
 
-        self.total_layers = 2 + n_layers
+        # Check if hidden layers exist
+        self.hidden_layers_exist = (n_layers != 0)
+
+        # Set clamping and gradient functions
+        if function_set is not None:
+
+            assert len(function_set) == 2, \
+                "Provide a set of TWO functions."
+
+            # Load functions from provided set
+            self.clamp = function_set[0]
+            self.grade = function_set[1]
+
+        else:
+            # Default to hyperbolic tangent and its derivative
+            self.clamp = ctanh
+            self.grade = tanhp
+
+        self.total_layers = n_layers + 2
         self.weights = []
 
         """ Initialize interconnection weight values """
-        if n_layers != 0:
+        if self.hidden_layers_exist:
+
             # Number of connections between input and hidden layers
             ih_inter = (n_in) * (n_hidden)
 
             # Number of connections between interior hidden layers
-            hh_inter = ((n_hidden + 1) * (n_hidden))  # interlayer connections
-            hh_total = (hh_inter) ** (n_layers - 1)   # total over all layers
+            hh_inter = ((n_hidden + 1) * (n_hidden))
 
             # Number of connections between hidden and output layers
             ho_inter = (n_hidden) * (n_out)
@@ -45,23 +60,25 @@ class NeuralNetwork:
             self.weights.append(np.ones(ho_inter))
 
         else:
+
+            # Number of connections between input and output layers
             io_inter = (n_in) * (n_out)
             self.weights.append(np.ones(io_inter))
 
         """ Initialize node propogation values """
         self.prop_values = []
 
-        self.prop_values.append(np.ones(n_in))
+        self.prop_values.append(np.ones(n_in))  # add input nodes
 
         for i in range(self.n_layers):
-            self.prop_values.append(np.ones(n_hidden))
+            self.prop_values.append(np.ones(n_hidden))  # add hidden nodes
 
-        self.prop_values.append(np.ones(n_out))
+        self.prop_values.append(np.ones(n_out))  # add output nodes
 
         assert len(self.prop_values) == self.total_layers, \
             "Propogation array size mismatch!"
 
-    # TODO: MAKE THIS WORK.
+    # TODO: DOUBLE CHECK THIS WORKS
     def propogate(self, inputs):
         """Calculate outputs using provided inputs.
         Propagates through all defined nodes using currently assigned weight
@@ -72,68 +89,61 @@ class NeuralNetwork:
 
         NOTE: inputs should be a list built from parsing the game data for
         specified heuristics!
-
-        In this case: R0-R3 and C0-C3 de/ascending? (Monotonicity)
         """
-
         assert len(inputs) == self.n_in - 1, \
-            "Input incompatible with number of input nodes!"  # should be 8
-
-        # TODO: MAKE EVALUATIONS ACTUALLY EVALUATE INSTEAD OF PRINTING!
+            "Input incompatible with number of input nodes!"
 
         # Evaluate input layer (assigns input values to propogation array)
         print("Evaluating input layer")
         for i in range(self.n_in - 1):
-            (self.prop_values[0])[i] = ctanh(inputs[i])
-            print((self.prop_values[0])[i])   # TEST STATEMENT--REMOVE!
+            (self.prop_values[0])[i] = inputs[i]
+            print((self.prop_values[0])[i])  # TEST PRINT
 
-        # TODO: Evaluate hidden layers
+        # Since the last layer is zero-indexed by -1, and there are n - 1
+        # weight arrays for n layers, last_weight index should be n - 2
+        last_layer = self.total_layers - 1
+        last_weight = self.total_layers - 2
 
-        if self.n_layers != 0:
+        if self.hidden_layers_exist:
             # Step 2: Hidden -> Hidden (if n_hidden > 1)
             print("Evaluating hidden layers")
             for i in range(self.n_layers):
-
                 for j in range(self.n_hidden):
-
                     signal = 0.0  # transmission
 
-                    print((self.prop_values[i])[j])   # TEST STATEMENT--REMOVE!
-
+                    # Check to see if evaluating first hidden layer
                     if i == 0:
-                        # first hidden layer takes input layer as previous
-                        previous_layer_size = self.n_in - 1
-                    else:
-                        # subsequent layers take hidden layers as previous
-                        previous_layer_size = self.n_hidden
+                        # First hidden layer takes input layer as previous
+                        layer_before_hidden = self.n_in - 1
 
-                    for k in range(previous_layer_size):
-                        signal += (self.weights[i + 1])[k] * \
+                    else:
+                        # Subsequent layers take hidden layers as previous
+                        layer_before_hidden = self.n_hidden
+
+                    for k in range(layer_before_hidden):
+                        signal += (self.weights[i])[k] * \
                                   (self.prop_values[0])[k]
 
-                    # TODO: DOUBLE CHECK THE MATH ON THIS
-                    (self.prop_values[i + 1])[j] = ctanh(signal)
+                    # Hidden layers start at index 1, so + 1
+                    (self.prop_values[i + 1])[j] = self.clamp(signal)
+                    print((self.prop_values[i + 1])[j])  # TEST PRINT
 
-            # TODO: Evaluate output layer
-            print("Evaluating output layer")
-            for i in range(self.n_out):
-                signal = 0.0
-                for j in range(self.n_hidden):
-                    signal += (self.prop_values[i])[j]
-                    # TODO: ADD IN PROCESSING AND CLAMPING
-                    print((self.prop_values[self.total_layers - 1])[i])
-                    # TEST STATEMENT--REMOVE!
-                (self.prop_values[i + 1])[j] = ctanh(signal)
+        # Evaluate output layer
+        print("Evaluating output layer")
+        for i in range(self.n_out):
+            signal = 0.0
 
-        else:
-            print("Evaluating output layer")
-            for i in range(self.n_out):
+            if self.hidden_layers_exist:
+                layer_before_output = self.n_hidden
+            else:
+                layer_before_output = self.n_in - 1
 
-                signal == 0.0
+            for j in range(layer_before_output):
+                signal += (self.weights[last_weight])[j] * \
+                          (self.prop_values[i])[j]
 
-                for j in range(self.n_in):
-                    signal += (self.weights[self.total_layers - 1])[j]
-
+            (self.prop_values[last_layer])[i] = self.clamp(signal)  # clamp!
+            print((self.prop_values[last_layer])[i])  # TEST PRINT
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
