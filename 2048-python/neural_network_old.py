@@ -33,37 +33,43 @@ class NeuralNetwork:
             self.grade = tanh_prime
 
         self.total_layers = n_layers + 2
-
-        # Initialize interconnection weight values
         self.weights = []
 
+        """ Initialize interconnection weight values """
         if self.hidden_layers_exist:
 
-            # Input-Hidden matrix
-            self.weights.append(np.random.rand(self.n_in - 1, self.n_hidden))
+            # Number of connections between input and hidden layers
+            ih_inter = (n_in) * (n_hidden)
 
-            # Hidden-Hidden matrices
-            for i in range(self.n_layers):
-                self.weights.append(np.random.rand(self.n_hidden,
-                                                   self.n_hidden))
+            # Number of connections between interior hidden layers
+            hh_inter = ((n_hidden + 1) * (n_hidden))
 
-            # Hidden-Output matrix
-            self.weights.append(np.random.rand(self.n_hidden, self.n_out))
+            # Number of connections between hidden and output layers
+            ho_inter = (n_hidden) * (n_out)
+
+            # Add the arrays of weight values (1.0 right now) to the list
+            self.weights.append(np.ones(ih_inter))
+
+            for i in range(n_layers - 1):
+                self.weights.append(np.ones(hh_inter))
+
+            self.weights.append(np.ones(ho_inter))
 
         else:
-            # Input-Output matrix
-            self.weights.append(np.random.rand(self.n_in - 1, self.n_out))
 
-        # Initialize propogation value arrays
+            # Number of connections between input and output layers
+            io_inter = (n_in) * (n_out)
+            self.weights.append(np.ones(io_inter))
+
+        """ Initialize node propogation values """
         self.prop_values = []
 
-        self.prop_values.append(np.zeros(self.n_in))  # input values
+        self.prop_values.append(np.ones(n_in))  # add input nodes
 
-        if self.hidden_layers_exist:
-            for i in range(self.n_layers):
-                self.prop_values.append(np.zeros(self.n_hidden))
+        for i in range(self.n_layers):
+            self.prop_values.append(np.ones(n_hidden))  # add hidden nodes
 
-        self.prop_values.append(np.zeros(self.n_out))  # output values
+        self.prop_values.append(np.ones(n_out))  # add output nodes
 
         assert len(self.prop_values) == self.total_layers, \
             "Propogation array size mismatch!"
@@ -83,31 +89,58 @@ class NeuralNetwork:
         assert len(inputs) == self.n_in - 1, \
             "Input incompatible with number of input nodes!"
 
-        last_layer = self.total_layers - 1
-        last_weight = last_layer - 1
-
         # Evaluate input layer (assigns input values to propogation array)
         print("Evaluating input layer")
         for i in range(self.n_in - 1):
             (self.prop_values[0])[i] = inputs[i]
+            print((self.prop_values[0])[i])  # TEST PRINT
 
-        print(str(self.prop_values[0]))
+        # Since the last layer is zero-indexed by -1, and there are n - 1
+        # weight arrays for n layers, last_weight index should be n - 2
+        last_layer = self.total_layers - 1
+        last_weight = self.total_layers - 2
 
-        # Evaluate hidden layers
-        print("Evaluating hidden layers")
-        for i in range(self.n_layers):  # for each layer...
-            for j in range(self.n_hidden):  # for each node
-                # INNER PRODUCT OF WEIGHT ROW IN MATRIX AND PREVIOUS PROP_VAL
-                signal = np.dot((self.weights[i])[j, :], self.prop_values[i + 1])
-                print(str(signal))  # diagnostic output
+        if self.hidden_layers_exist:
+            # Step 2: Hidden -> Hidden (if n_hidden > 1)
+            print("Evaluating hidden layers")
+            for i in range(self.n_layers):
+                print("Layer " + str(i))
+                for j in range(self.n_hidden):
+                    signal = 0.0  # transmission
+
+                    # Check to see if evaluating first hidden layer
+                    if i == 0:
+                        # First hidden layer takes input layer as previous
+                        layer_before_hidden = self.n_in - 1
+
+                    else:
+                        # Subsequent layers take hidden layers as previous
+                        layer_before_hidden = self.n_hidden
+
+                    for k in range(layer_before_hidden):
+                        signal += (self.weights[i])[k] * \
+                                  (self.prop_values[0])[k]
+
+                    # Hidden layers start at index 1, so + 1
+                    (self.prop_values[i + 1])[j] = self.clamp(signal)
+                    print((self.prop_values[i + 1])[j])  # TEST PRINT
 
         # Evaluate output layer
         print("Evaluating output layer")
         for i in range(self.n_out):
-            signal = np.dot((self.weights[last_weight])[i, :],
-                            self.prop_values[last_layer - 1])
-            print(str(signal))
-            #(self.prop_values[last_layer])[i] = self.clamp(signal)
+            signal = 0.0
+
+            if self.hidden_layers_exist:
+                layer_before_output = self.n_hidden
+            else:
+                layer_before_output = self.n_in - 1
+
+            for j in range(layer_before_output):
+                signal += (self.weights[last_weight])[j] * \
+                          (self.prop_values[i])[j]
+
+            (self.prop_values[last_layer])[i] = self.clamp(signal)  # clamp!
+            print((self.prop_values[last_layer])[i])  # TEST PRINT
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
