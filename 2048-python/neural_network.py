@@ -40,7 +40,7 @@ class NeuralNetwork:
 
         if self.hidden_layers_exist:
             # Input-Hidden matrix
-            self.weights.append(np.random.rand(self.n_in - 1, self.n_hidden))
+            self.weights.append(np.random.rand(self.n_hidden, self.n_in))
 
             # Hidden-Hidden matrices
             for i in range(self.n_layers):
@@ -48,11 +48,11 @@ class NeuralNetwork:
                                                    self.n_hidden))
 
             # Hidden-Output matrix
-            self.weights.append(np.random.rand(self.n_hidden, self.n_out))
+            self.weights.append(np.random.rand(self.n_out, self.n_hidden))
 
         else:
             # Input-Output matrix
-            self.weights.append(np.random.rand(self.n_in - 1, self.n_out))
+            self.weights.append(np.random.rand(self.n_out, self.n_in))
 
         # Initialize propogation value arrays
         self.prop_values = []
@@ -91,19 +91,13 @@ class NeuralNetwork:
         for i in range(self.n_in - 1):
             (self.prop_values[0])[i] = inputs[i]
 
-        print(str(self.prop_values[0]))
-
         # Evaluate hidden layers
         print("Evaluating hidden layers")
         for i in range(self.n_layers):  # for each layer...
             for j in range(self.n_hidden):  # for each node...
                 signal = np.dot((self.weights[i])[j, :],
-                                (self.prop_values[i + 1]))
-                (self.prop_values[i + 1])[j] = self.clamp(signal)  # write out
-                print("VAL IS: " + str((self.prop_values[i + 1])[j]))
-                print("SIG " + str(i) + str(j) + ": " + str(signal))  # diag output
-
-        print((self.weights[i])[j, :])
+                                (self.prop_values[i]))
+                (self.prop_values[i + 1])[j] = self.clamp(signal)
 
         # Evaluate output layer
         print("Evaluating output layer")
@@ -111,7 +105,8 @@ class NeuralNetwork:
             signal = np.dot((self.weights[last_weight])[i, :],
                             self.prop_values[last_layer - 1])
             (self.prop_values[last_layer])[i] = self.clamp(signal)
-            print(str(signal))
+
+        return(self.prop_values[last_layer])
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
@@ -122,15 +117,12 @@ class NeuralNetwork:
         self.weights = weights_in
 
     def save_weights(self):
-        """ Return weights as a list1 """
+        """ Return weights as a list """
         return self.weights
+
+    def set_bias(self, bias):
+        (self.prop_values[0])[self.n_in - 1] = bias
 
     def back_propogate(self, training_data, learn_rate, error_bound):
         # USE ERROR AND UPDATE!
-        return 0
-
-    def print_vals(self):
-        print("intercheck2")
-        print(str(self.weights))
-        print("propcheck2")
-        print(str(self.prop_values))
+        return self.weights

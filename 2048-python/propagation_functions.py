@@ -20,3 +20,10 @@ def expit_prime(output):
 
 def tanh_prime(output):
     return 1 - (output ** 2)
+
+
+def linear(signal):
+    return signal
+
+def linear_prime(output):
+    return 1
