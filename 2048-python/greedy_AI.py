@@ -47,22 +47,22 @@ class GreedyAI:
 
     """ Moves the board according to the greedy AI's algorithm.
 
-        Returns true if AI's move was possible
+        Returns the move that the AI made, or -1 if the game was over.
         If AI's move wasn't possible, tries to move in the following order:
         right, then up, then left, then down
     """
     def move(self):
         # game is over; do nothing
         if(self.board.game_over()):
-            return False
+            return -1
         # calculate AI's move
         dir = GreedyAI._calc_move(self.board, self.iters)[1]
         # try to move in that direction
         if(self.board.move(dir)):
-            return True
+            return dir
         # if the move failed, try all possible moves in order
         for dir in gs:
             if(self.board.move(dir)):
-                return False
+                return dir
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
