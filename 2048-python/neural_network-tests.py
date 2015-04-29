@@ -14,6 +14,8 @@ ALG_SET2 = (expit, expit_prime)
 I = [1, 1, 1, 1, 1, 1, 1, 1]  # input set
 B = 3
 
+T_DATA = [0, 0, 0, 1]
+
 ZERO = np.zeros(8)
 
 W = [np.random.rand(4, 9),
@@ -31,6 +33,7 @@ N_LAYERS = 2
 #T_DATA = [input_, output_]
 L_RATE = 0.5
 E_BOUND = 0.000001
+M_VAL = 0.3
 
 network = N(N_IN, N_OUT, N_HIDDEN, N_LAYERS, ALG_SET1)
 
@@ -40,10 +43,9 @@ network.load_weights(W)
 #print(str(network.prop_values))
 #print(str(network.weights))
 network.propogate(I)
+network.back_propogate(T_DATA, L_RATE, M_VAL)
 
-NPV = network.prop_values[network.total_layers - 1]
-
-print(str(NPV))
+#print(str(network.error_values))
 
 """ THESE CAN AND SHOULD CAUSE ASSERTION ERRORS. """
 #network.load_weights(BW)

@@ -34,24 +34,29 @@ class NeuralNetwork:
             self.clamp = tanh
             self.grade = tanh_prime
 
-        # Initialize weight values for node interconnections
+        # Initialize weight values and previous changes for node interlinks
         self.weights = []
+        self.changes = []  # previous set of changes
 
         if self.hidden_layers_exist:
-            # Input-Hidden weights
+            # Input-Hidden weights and changes
             self.weights.append(np.random.rand(self.n_hidden, self.n_in))
+            self.changes.append(np.zeros((self.n_hidden, self.n_in)))
 
-            # Hidden-Hidden weights
+            # Hidden-Hidden weights and changes
             for i in range(self.n_layers):  # handles multiple layers
                 self.weights.append(np.random.rand(self.n_hidden,
                                                    self.n_hidden))
+                self.changes.append(np.zeros((self.n_hidden, self.n_hidden)))
 
-            # Hidden-Output weights
+            # Hidden-Output weights and changes
             self.weights.append(np.random.rand(self.n_out, self.n_hidden))
+            self.changes.append(np.zeros((self.n_out, self.n_hidden)))
 
         else:
-            # Input-Output matrix
+            # Input-Output weights and changes
             self.weights.append(np.random.rand(self.n_out, self.n_in))
+            self.changes.append(np.zeros((self.n_out, self.n_in)))
 
         # Initialize propogation and error value arrays
         self.prop_values = []
@@ -77,6 +82,9 @@ class NeuralNetwork:
 
         assert len(self.error_values) == self.total_layers - 1, \
             "Error array is of the wrong size!"
+
+        assert len(self.weights) == len(self.changes), \
+            "Weights and Change arrays are inconsistent!"
 
     # TODO: DOUBLE CHECK THIS WORKS
     def propogate(self, inputs):
@@ -118,21 +126,22 @@ class NeuralNetwork:
 
         return(self.prop_values[last_layer])
 
-    def back_propogate(self, training, learn_rate):
+    def back_propogate(self, template, learn_rate, momentum):
         """ Calculate error after a propogation run and adjust weights based
             on provided training data.
 
             Args:
-                training - set of expected outputs
+                template - expected output(s)
 
         """
         last_layer = self.total_layers - 1
+        last_weight = last_layer - 1
         h_start = self.total_layers - 2  # start hidden layers reverse index
 
         # Calculate output layer error
         print("Evaluating output error")
         for i in range(self.n_out):
-            error = training[i] - (self.prop_values[last_layer])[i]
+            error = template[i] - (self.prop_values[last_layer])[i]
             self.error_values[0][i] = \
                 error * self.grade((self.prop_values[last_layer])[i])
 
@@ -145,8 +154,28 @@ class NeuralNetwork:
                     error * self.grade(self.prop_values[h_start - i][j])
 
         # Update output weights
+        for i in range(self.n_hidden):
+            for j in range(self.n_out):
+                shift = self.error_values[0][j] * \
+                    self.prop_values[last_layer - 1][j]
+                print("shift: " + str(shift))
+
+                self.weights[last_weight][i][j] += \
+                    (learn_rate * shift) + (momentum * self.changes[0][i][j])
+
+                self.changes[last_weight][i][j] = shift  # update changes
+                print("DELTAS")
+                print(str(self.changes))
+
         # Update hidden weights
+        for i in range(self.n_layers):
+            for j in range(self.n_hidden):
+                for k in range(self.n_hidden):
+                    shift = 0
         # Update input weights
+        for i in range(self.n_hidden):
+            for j in range(self.n_in):
+                shift = 0
         return self.error_values
 
     def load_weights(self, weights_in):
@@ -157,9 +186,11 @@ class NeuralNetwork:
 
         self.weights = weights_in
 
-    def save_weights(self):
-        """ Return weights as a list """
-        return self.weights
-
     def set_bias(self, bias):
         (self.prop_values[0])[self.n_in - 1] = bias
+
+    def train(self, training_data, epoch):
+        for i in len(training_data):
+            self.propogate(training_data[0])
+            self.back_propogate(training_data[1])
+        return 0
