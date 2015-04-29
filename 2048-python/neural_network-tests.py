@@ -11,23 +11,20 @@ ALG_SET0 = (linear, linear_prime)
 ALG_SET1 = (tanh, tanh_prime)
 ALG_SET2 = (expit, expit_prime)
 
-I = [1, 1, 1, 1, 1, 1, 1, 1]  # input set
+in_size = 4
+
+I = np.ones(in_size)  # input set
 B = 3
 
 T_DATA = [0, 0, 0, 1]
 
 ZERO = np.zeros(8)
 
-W = [np.random.rand(4, 9),
-     np.random.rand(4, 4),
-     np.random.rand(4, 4),
-     np.random.rand(4, 4)]
-
 BW = [[0,0], [0], [1, 2, 3, 2]]  # BAD WEIGHT MATRIX; USE TO BREAK THINGS.
 
-N_IN = 8
-N_OUT = 4
-N_HIDDEN = 4
+N_IN = in_size
+N_OUT = 2
+N_HIDDEN = 3
 N_LAYERS = 2
 
 #T_DATA = [input_, output_]
@@ -38,11 +35,9 @@ M_VAL = 0.3
 network = N(N_IN, N_OUT, N_HIDDEN, N_LAYERS, ALG_SET1)
 
 network.set_bias(B)
-network.load_weights(W)
 
-#print(str(network.prop_values))
-#print(str(network.weights))
 network.propogate(I)
+print(network.error_values[1][0])
 network.back_propogate(T_DATA, L_RATE, M_VAL)
 
 #print(str(network.error_values))

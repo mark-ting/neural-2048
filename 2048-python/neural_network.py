@@ -15,8 +15,9 @@ class NeuralNetwork:
         self.n_hidden = n_hidden
         self.n_layers = n_layers
 
-        self.total_layers = n_layers + 2            # helps indexing later
-        self.hidden_layers_exist = (n_layers != 0)  # saves work later
+        # Helper indices
+        self.total_layers = n_layers + 2
+        self.hidden_layers_exist = (n_layers != 0) & (n_hidden != 0)
         self.test = 0
 
         # Set clamping and gradient functions
@@ -35,6 +36,10 @@ class NeuralNetwork:
             self.grade = tanh_prime
 
         # Initialize weight values and previous changes for node interlinks
+        #
+        # Important indices:    w/c[0] = input-hidden
+        #                       w/c[1 -> total_layers - 2] = h-h matrices
+        #                       w/c[self.total_layers - 1] = h/i-o matrix
         self.weights = []
         self.changes = []  # previous set of changes
 
@@ -44,7 +49,7 @@ class NeuralNetwork:
             self.changes.append(np.zeros((self.n_hidden, self.n_in)))
 
             # Hidden-Hidden weights and changes
-            for i in range(self.n_layers):  # handles multiple layers
+            for i in range(self.n_layers - 1):  # handles multiple layers
                 self.weights.append(np.random.rand(self.n_hidden,
                                                    self.n_hidden))
                 self.changes.append(np.zeros((self.n_hidden, self.n_hidden)))
@@ -62,7 +67,8 @@ class NeuralNetwork:
         self.prop_values = []
         self.error_values = []
 
-        self.prop_values.append(np.zeros(self.n_in))  # no need for error (in!)
+        self.prop_values.append(np.zeros(self.n_in))   # no need for error so
+        self.error_values.append("BUFFER")
 
         if self.hidden_layers_exist:
             # Hidden layer values and errors
@@ -74,14 +80,18 @@ class NeuralNetwork:
         self.prop_values.append(np.zeros(self.n_out))
         self.error_values.append(np.zeros(self.n_out))
 
-        self.error_values.reverse  # sets output first (for error evaluation)
-
         # Sanity checks!
         assert len(self.prop_values) == self.total_layers, \
-            "Propogation array is of the wrong size!"
+            "Propogation store is of the wrong size!"
 
-        assert len(self.error_values) == self.total_layers - 1, \
-            "Error array is of the wrong size!"
+        assert len(self.error_values) == self.total_layers, \
+            "Error store is of the wrong size!"
+
+        assert len(self.weights) == self.total_layers - 1, \
+            "Weight store is of the wrong size!"
+
+        assert len(self.changes) == self.total_layers - 1, \
+            "Change store is of the wrong size!"
 
         assert len(self.weights) == len(self.changes), \
             "Weights and Change arrays are inconsistent!"
@@ -120,7 +130,7 @@ class NeuralNetwork:
         # Evaluate output layer
         print("Evaluating output layer")
         for i in range(self.n_out):
-            signal = np.dot(self.weights[last_weight][i, :],
+            signal = np.dot(self.weights[last_weight - 1][i, :],
                             self.prop_values[last_layer - 1])
             self.prop_values[last_layer][i] = self.clamp(signal)
 
@@ -135,15 +145,14 @@ class NeuralNetwork:
 
         """
         last_layer = self.total_layers - 1
-        last_weight = last_layer - 1
         h_start = self.total_layers - 2  # start hidden layers reverse index
 
         # Calculate output layer error
         print("Evaluating output error")
         for i in range(self.n_out):
             error = template[i] - (self.prop_values[last_layer])[i]
-            self.error_values[0][i] = \
-                error * self.grade((self.prop_values[last_layer])[i])
+            self.error_values[1][i] = \
+                error * self.grade(self.prop_values[last_layer][i])
 
         # Calculate hidden layer error
         print("Evaluating hidden layer error")
@@ -160,10 +169,10 @@ class NeuralNetwork:
                     self.prop_values[last_layer - 1][j]
                 print("shift: " + str(shift))
 
-                self.weights[last_weight][i][j] += \
+                self.weights[last_layer][i][j] += \
                     (learn_rate * shift) + (momentum * self.changes[0][i][j])
 
-                self.changes[last_weight][i][j] = shift  # update changes
+                self.changes[last_layer][i][j] = shift  # update changes
                 print("DELTAS")
                 print(str(self.changes))
 
