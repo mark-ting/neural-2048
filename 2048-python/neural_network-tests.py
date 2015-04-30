@@ -37,10 +37,7 @@ network = N(N_IN, N_OUT, N_HIDDEN, N_LAYERS, ALG_SET1)
 network.set_bias(B)
 
 network.propogate(I)
-print(network.error_values[1][0])
 network.back_propogate(T_DATA, L_RATE, M_VAL)
-
-#print(str(network.error_values))
 
 """ THESE CAN AND SHOULD CAUSE ASSERTION ERRORS. """
 #network.load_weights(BW)

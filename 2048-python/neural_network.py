@@ -67,8 +67,8 @@ class NeuralNetwork:
         self.prop_values = []
         self.error_values = []
 
-        self.prop_values.append(np.zeros(self.n_in))   # no need for error so
-        self.error_values.append("BUFFER")
+        self.prop_values.append(np.zeros(self.n_in))
+        self.error_values.append(np.zeros(1))  # this should not be touched
 
         if self.hidden_layers_exist:
             # Hidden layer values and errors
@@ -145,47 +145,34 @@ class NeuralNetwork:
 
         """
         last_layer = self.total_layers - 1
+        last_weight = self.total_layers - 2
         h_start = self.total_layers - 2  # start hidden layers reverse index
 
         # Calculate output layer error
         print("Evaluating output error")
         for i in range(self.n_out):
             error = template[i] - (self.prop_values[last_layer])[i]
-            self.error_values[1][i] = \
-                error * self.grade(self.prop_values[last_layer][i])
+            prev_value = self.prop_values[last_layer][i]
+
+            self.error_values[last_layer][i] = \
+                error * self.grade(prev_value)
 
         # Calculate hidden layer error
         print("Evaluating hidden layer error")
         for i in range(self.n_layers):  # for each hidden layer...
             for j in range(self.n_hidden):
-                error = np.dot(self.error_values[0], self.weights[i + 1][j, :])
-                self.error_values[i + 1][j] = \
-                    error * self.grade(self.prop_values[h_start - i][j])
+                error = self.error_values[last_layer - (i + 1)][j]
+                prev_value = self.prop_values[last_layer - (i + 1)][j]
+
+                self.error_values[h_start - i][j] = \
+                    error * self.grade(prev_value)
 
         # Update output weights
-        for i in range(self.n_hidden):
-            for j in range(self.n_out):
-                shift = self.error_values[0][j] * \
-                    self.prop_values[last_layer - 1][j]
-                print("shift: " + str(shift))
-
-                self.weights[last_layer][i][j] += \
-                    (learn_rate * shift) + (momentum * self.changes[0][i][j])
-
-                self.changes[last_layer][i][j] = shift  # update changes
-                print("DELTAS")
-                print(str(self.changes))
 
         # Update hidden weights
-        for i in range(self.n_layers):
-            for j in range(self.n_hidden):
-                for k in range(self.n_hidden):
-                    shift = 0
+
         # Update input weights
-        for i in range(self.n_hidden):
-            for j in range(self.n_in):
-                shift = 0
-        return self.error_values
+
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
