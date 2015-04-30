@@ -161,24 +161,22 @@ class NeuralNetwork:
         # Calculate hidden layer error
         print("Evaluating hidden layer error")
         for i in range(self.n_layers):  # for each hidden layer...
-            for j in range(self.n_hidden):
-                if i == 0:
+            if i == 0:
+                for j in range(self.n_hidden):
                     for k in range(self.n_out):
                         error = self.error_values[last_layer][k]
                         prev_value = self.prop_values[last_layer][k]
 
                         self.error_values[last_weight - i][j] = \
                             error * self.grade(prev_value)
+            else:
+                for l in range(self.n_hidden):
+                    for m in range(self.n_hidden):
+                        error = self.error_values[last_layer - i][l]
+                        prev_value = self.prop_values[last_layer - i][l]
 
-                else:
-                    for k in range(self.n_hidden):
-                        error = self.error_values[last_weight - i][k]
-                        prev_value = self.prop_values[last_weight - i][k]
-
-                        self.error_values[last_weight - i][j] = \
+                        self.error_values[last_weight - i][m] = \
                             error * self.grade(prev_value)
-
-        print(self.error_values)
 
         # Update output weights
         print("Adjusting output weights")
@@ -209,6 +207,22 @@ class NeuralNetwork:
 
         # Update input weights
         print("Adjusting input weights")
+        for i in range(self.n_hidden):
+            adjustment = self.error_values[1][i] * \
+                         self.prop_values[1][i]
+
+            new_weight = (learn_rate * adjustment) + \
+                         (momentum * self.changes[0][i])
+
+            self.weights[0][i] += new_weight
+            self.changes[0][i] = adjustment
+
+        total_error = 0.0
+        for i in range(len(template)):
+            total_error += \
+                ((template[i] - self.prop_values[last_layer][i]) ** 2) / 2
+
+
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
@@ -221,8 +235,20 @@ class NeuralNetwork:
     def set_bias(self, bias):
         (self.prop_values[0])[self.n_in - 1] = bias
 
-    def train(self, training_data, epoch):
-        for i in len(training_data):
-            self.propogate(training_data[0])
-            self.back_propogate(training_data[1], 0.5, 0.3)
-        return 0
+    def train(self, training_data, epoch, starting_weights=None):
+        """ Train the neural network using provided training data.
+            Return the weight matrix of the "trained" network.
+
+            Args:
+                training_data: tuples of (inputs, outputs) used
+                epoch: iteration length
+        """
+        for e in range(epoch):
+            for data_sets in len(training_data):
+                inputs = training_data[data_sets][0]
+                templates = training_data[data_sets][1]
+
+            self.propogate(inputs)
+            self.back_propogate(templates, 0.5, 0.3)
+
+        return self.weights
