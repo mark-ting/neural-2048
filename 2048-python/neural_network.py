@@ -68,7 +68,7 @@ class NeuralNetwork:
         self.error_values = []
 
         self.prop_values.append(np.zeros(self.n_in))
-        self.error_values.append(np.zeros(1))  # this should not be touched
+        self.error_values.append(np.ones(1))  # this should not be touched
 
         if self.hidden_layers_exist:
             # Hidden layer values and errors
@@ -112,7 +112,7 @@ class NeuralNetwork:
             "Input incompatible with number of input nodes!"
 
         last_layer = self.total_layers - 1
-        last_weight = last_layer - 1
+        last_weight = self.total_layers - 2
 
         # Evaluate input layer (assigns input values to propogation array)
         print("Evaluating input layer")
@@ -141,12 +141,13 @@ class NeuralNetwork:
             on provided training data.
 
             Args:
-                template - expected output(s)
+                template:   expected output(s)
+                learn_rate: how granular weight adjustments are
+                momentum:   how much past rates of changes affect shifts
 
         """
         last_layer = self.total_layers - 1
         last_weight = self.total_layers - 2
-        h_start = self.total_layers - 2  # start hidden layers reverse index
 
         # Calculate output layer error
         print("Evaluating output error")
@@ -161,18 +162,53 @@ class NeuralNetwork:
         print("Evaluating hidden layer error")
         for i in range(self.n_layers):  # for each hidden layer...
             for j in range(self.n_hidden):
-                error = self.error_values[last_layer - (i + 1)][j]
-                prev_value = self.prop_values[last_layer - (i + 1)][j]
+                if i == 0:
+                    for k in range(self.n_out):
+                        error = self.error_values[last_layer][k]
+                        prev_value = self.prop_values[last_layer][k]
 
-                self.error_values[h_start - i][j] = \
-                    error * self.grade(prev_value)
+                        self.error_values[last_weight - i][j] = \
+                            error * self.grade(prev_value)
+
+                else:
+                    for k in range(self.n_hidden):
+                        error = self.error_values[last_weight - i][k]
+                        prev_value = self.prop_values[last_weight - i][k]
+
+                        self.error_values[last_weight - i][j] = \
+                            error * self.grade(prev_value)
+
+        print(self.error_values)
 
         # Update output weights
+        print("Adjusting output weights")
+        for i in range(self.n_out):
+            adjustment = self.error_values[last_layer][i] * \
+                         self.prop_values[last_layer][i]
+            new_weight = (learn_rate * adjustment) + \
+                         (momentum * self.changes[last_weight][i])
+
+            self.weights[last_weight][i] += new_weight
+            self.changes[last_weight][i] = adjustment
 
         # Update hidden weights
+        print("Adjusting hidden weights")
+        for i in range(self.n_layers):  # for each hidden layer...
+            for j in range(self.n_hidden):
+                layer_index = last_layer - (i + 1)
+                weight_index = last_weight - (i + 1)
+
+                adjustment = self.error_values[layer_index][j] * \
+                             self.prop_values[layer_index][j]
+
+                new_weight = (learn_rate * adjustment) + \
+                             (momentum * self.changes[weight_index][j])
+
+                self.weights[weight_index][j] += new_weight
+                self.changes[weight_index][j] = adjustment
 
         # Update input weights
-
+        print("Adjusting input weights")
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
@@ -188,5 +224,5 @@ class NeuralNetwork:
     def train(self, training_data, epoch):
         for i in len(training_data):
             self.propogate(training_data[0])
-            self.back_propogate(training_data[1])
+            self.back_propogate(training_data[1], 0.5, 0.3)
         return 0
