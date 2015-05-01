@@ -23,7 +23,7 @@ def parse_nbyn(s):
     count = 0
     for i in range(num_rc):
         for j in range(num_rc):
-            grid[i][j] = Obj2048(parse_char(s[count]))
+            grid[i][j] = parse_char(s[count])
             count += 1
         # skip newline
         count += 1
@@ -65,7 +65,7 @@ def load_datafile(filename):
             if (i % 8 in range(4)):
                 curr_matrix += data[i]
             elif (curr_matrix != ""):
-                curr_board = Board2048(parse_nbyn(curr_matrix))
+                curr_board = parse_nbyn(curr_matrix)
                 curr_matrix = ""
             if (i % 8 == 7):
                 tuple_arr.append((curr_board, parse_move(data[i])))
@@ -78,22 +78,26 @@ def load_datafile(filename):
     network.
 """
 def parse_arr(tuple_arr):
-    list(map(_parse_pair, tuple_arr))
+    return list(map(parse_pair, tuple_arr))
     
     
 """ Parses a tuple (Board2048, move) into input/output neuron states. """
-def parse_pair(tuple):
+def parse_pair(pair):
     neuron_arr = []
     for i in gs:
         for j in gs:
-            neuron_arr.append(log(tuple[0].grid[i][j], 2))
-    if move == 0:
+            value = pair[0].grid[i][j].val
+            if value == 0:
+                neuron_arr.append(0)
+            else:
+                neuron_arr.append(log(pair[0].grid[i][j].val, 2))
+    if pair[1] == 0:
         return (neuron_arr, [0,0,0,1])
-    elif move == 1:
+    elif pair[1] == 1:
         return (neuron_arr, [0,0,1,0])
-    elif move == 2:
+    elif pair[1] == 2:
         return (neuron_arr, [0,1,0,0])
-    elif move == 3:
+    elif pair[1] == 3:
         return (neuron_arr, [1,0,0,0])
     else:
         raise ValueError("ERROR: Move must be 0, 1, 2, or 3")

@@ -13,12 +13,15 @@ from parse_game import *
 
 s = "0123\n4567\n89ab\ncdef\naasdfasdfasf"
 #print(str(parse_nbyn(s)))
+board = Board2048()
+print(board.grid)
+print(board.grid[0][0])
 
 datafile="C:\\Users\\Adam\\Dropbox\\Spring2015\\CS_51\\2048-heuristic-ai\\2048-ai-master\\training_data\\Output_1.txt"
 #print(parse_move("Move #2, move chosen down, current score=0"))
 x = load_datafile(datafile)
-print(str(x[5000][0].grid))
-print(x[5000][1])
+for i in range(len(x)):
+    print(type(x[i][0].grid[0][0].val))
 
 """
 z = Obj2048(0)
