@@ -84,13 +84,17 @@ def parse_arr(tuple_arr):
 """ Parses a tuple (Board2048, move) into input/output neuron states. """
 def parse_pair(pair):
     neuron_arr = []
+    sum = 0
+    for i in gs:
+        for j in gs:
+            sum += log(pair[0].grid[i][j].val, 2)
     for i in gs:
         for j in gs:
             value = pair[0].grid[i][j].val
             if value == 0:
                 neuron_arr.append(0)
             else:
-                neuron_arr.append(log(pair[0].grid[i][j].val, 2))
+                neuron_arr.append(log(pair[0].grid[i][j].val, 2)/sum)
     if pair[1] == 0:
         return (neuron_arr, [0,0,0,1])
     elif pair[1] == 1:
