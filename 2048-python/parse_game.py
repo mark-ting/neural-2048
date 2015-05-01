@@ -77,7 +77,7 @@ def load_datafile(filename):
     network.
 """
 def parse_arr(tuple_arr):
-    
+    list(map(_parse_pair, tuple_arr))
     
     
 """ Parses a tuple (Board2048, move) into input/output neuron states. """
