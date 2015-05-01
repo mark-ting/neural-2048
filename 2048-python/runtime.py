@@ -1,5 +1,6 @@
 import argparse
 from greedy_AI import GreedyAI
+from neural_AI import NeuralAI
 
 """ Command-line argument intake for runtime options """
 parser = argparse.ArgumentParser(description="2048-python frontend",
@@ -22,7 +23,7 @@ parser.add_argument('-v', '--verbosity', help="verbosity of log file",
 
 # parser.add_argument('--ui', help="Run the game in a terminal UI")
 
-""" List parsed variables """
+# List of parsed variables
 args = parser.parse_args()
 
 ai_enabled = args.ai
@@ -33,23 +34,27 @@ seed = args.seed
 log = args.log
 verb = args.verbosity
 
+trained_matrix = [] # training matrix here!
 
 def main():
     """ Main runtime """
 
     if ai_enabled:
-        ai = GreedyAI(iter=depth, s=seed)
+        ai = NeuralAI(trained_matrix)
 
         if log:
             out = open(log + '.log', 'w')
 
         while not(ai.board.game_over()):
-            if args.log:
+            if args.log is not None:
                 log_to_file(ai, out, verb, None)
             print(ai.board)
             ai.move()
+
+        print("TURN: " + str(ai.board.num_steps) + " | SCORE: " +
+              str(ai.board.score) + "\n")
     else:
-        """ FIXME: make UI call a method; else python gonna cry """
+        # Runs the UI version
         import UI.py     # runs manual UI (play using user input)
 
 
@@ -68,6 +73,5 @@ def log_to_file(ai, file, verbosity, delimiter=None):
             file.write(delimiter)
         else:
             file.write("--------------------\n\n")
-
 
 main()
