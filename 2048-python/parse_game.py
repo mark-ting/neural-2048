@@ -88,17 +88,15 @@ def parse_pair(pair):
     for i in gs:
         for j in gs:
             value = pair[0].grid[i][j].val
-            if value == 0:
-                neuron_arr.append(0)
-            else:
-                sum += log(pair[0].grid[i][j].val, 2)
+            if value != 0:
+                sum += log(value, 2)
     for i in gs:
         for j in gs:
             value = pair[0].grid[i][j].val
             if value == 0:
                 neuron_arr.append(0)
             else:
-                neuron_arr.append(log(pair[0].grid[i][j].val, 2)/sum)
+                neuron_arr.append(value, 2)/sum)
     if pair[1] == 0:
         return (neuron_arr, [0,0,0,1])
     elif pair[1] == 1:
