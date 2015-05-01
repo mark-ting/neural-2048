@@ -34,8 +34,8 @@ log = args.log
 verb = args.verbosity
 
 
-""" Main runtime """
 def main():
+    """ Main runtime """
 
     if ai_enabled:
         ai = GreedyAI(iter=depth, s=seed)
@@ -53,15 +53,15 @@ def main():
         import UI.py     # runs manual UI (play using user input)
 
 
-""" Logs an AI's game run to a text file """
 def log_to_file(ai, file, verbosity, delimiter=None):
+    """ Logs an AI's game run to a text file """
 
-    """ Output Turn and Score information """
+    # Print turn and score information
     if verbosity > 1:
         file.write("TURN: " + str(ai.board.num_steps) + " | SCORE: " +
                    str(ai.board.score) + "\n")
 
-    """ Output runtime board states """
+    # Print runtime board states
     if verbosity > 0:
         file.write(str(ai.board))
         if delimiter:
@@ -71,4 +71,3 @@ def log_to_file(ai, file, verbosity, delimiter=None):
 
 
 main()
-# class NoviceRuntime:

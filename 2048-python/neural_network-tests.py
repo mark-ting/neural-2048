@@ -21,7 +21,6 @@ ZERO = np.zeros(8)
 BW = [[0,0], [0], [1, 2, 3, 2]]  # BAD WEIGHT MATRIX; USE TO BREAK THINGS.
 
 L_RATE = 0.5
-E_BOUND = 0.000001
 M_VAL = 0.3
 
 network = N(N_IN, N_OUT, N_HIDDEN, N_LAYERS, ALG_SET1)

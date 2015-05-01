@@ -1,0 +1,19 @@
+\
+    docs\
+        readme
+        structure
+    
+    python-2048\
+        __init__.py
+        game.py
+        runtime.py
+        UI.pi
+        
+    helpers
+        
+    neural-network\
+        __init__.py
+        neural_network.py
+        neural_network-tests.py
+        parse_game.py
+        propagation_functions.py

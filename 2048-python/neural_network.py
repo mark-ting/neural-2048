@@ -98,15 +98,15 @@ class NeuralNetwork:
 
     # TODO: DOUBLE CHECK THIS WORKS
     def propogate(self, inputs):
-        """Calculate outputs using provided inputs.
-        Propagates through all defined nodes using currently assigned weight
-        values.
+        """ Calculate outputs using provided inputs.
+            Propagates through all defined nodes using currently assigned
+            weight values.
 
-        IMPORTANT: THIS DOES NOT UPDATE THE WEIGHT VALUES!
-        (See back_propogate for updating weight values.)
+            IMPORTANT: THIS DOES NOT UPDATE THE WEIGHT VALUES!
+            (See back_propogate for updating weight values.)
 
-        NOTE: inputs should be a list built from parsing the game data for
-        specified heuristics!
+            NOTE: inputs should be a list built from parsing the game data for
+            specified heuristics!
         """
         assert len(inputs) == self.n_in - 1, \
             "Input incompatible with number of input nodes!"
