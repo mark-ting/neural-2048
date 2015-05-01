@@ -20,7 +20,7 @@ class NeuralAI:
         if(self.board.game_over()):
             return -1
         # calculate AI's move
-        out = self.network.propogate(parse_pair(self.board,0)[0])
+        out = self.network.propogate(parse_pair((self.board,0))[0])
         dir = out.index(max(out))
         # try to move in that direction
         if(self.board.move(dir)):
