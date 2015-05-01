@@ -80,6 +80,9 @@ class NeuralNetwork:
         self.prop_values.append(np.zeros(self.n_out))
         self.error_values.append(np.zeros(self.n_out))
 
+        # Set bias to default (1)
+        (self.prop_values[0])[self.n_in - 1] = 1
+
         # Sanity checks!
         assert len(self.prop_values) == self.total_layers, \
             "Propogation store is of the wrong size!"
