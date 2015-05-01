@@ -9,10 +9,13 @@ parser = argparse.ArgumentParser(description="2048-python frontend",
 parser.add_argument('-a', '--ai', help="enable AI run mode",
                     action='store_true', default=False)
 
+parser.add_argument('-g', '--greedy', help="sets AI to be greedy",
+                    action='store_true', default=False)
+
 parser.add_argument('-d', help="set AI search iterations",
                     metavar="ITER", type=int, dest='searchdepth')
 
-parser.add_argument('-s', '--seed', help="custom seed for 2048 RNG placement",
+parser.add_argument('-s', '--seed', help="custom seed for 2048 placement RNG",
                     type=int)
 
 parser.add_argument('-l', '--log', help="outputs the AI run to a file",
@@ -27,6 +30,7 @@ parser.add_argument('-v', '--verbosity', help="verbosity of log file",
 args = parser.parse_args()
 
 ai_enabled = args.ai
+ai_greedy = args.greedy
 depth = args.searchdepth
 seed = args.seed
 
@@ -40,7 +44,11 @@ def main():
     """ Main runtime """
 
     if ai_enabled:
-        ai = NeuralAI(trained_matrix)
+        if ai_greedy:
+            ai = GreedyAI(iter=depth)
+
+        else:
+            ai = NeuralAI(trained_matrix)
 
         if log:
             out = open(log + '.log', 'w')
@@ -53,8 +61,9 @@ def main():
 
         print("TURN: " + str(ai.board.num_steps) + " | SCORE: " +
               str(ai.board.score) + "\n")
+
+    # Runs the UI version
     else:
-        # Runs the UI version
         import UI.py     # runs manual UI (play using user input)
 
 

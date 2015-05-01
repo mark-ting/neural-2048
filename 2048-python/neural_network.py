@@ -118,12 +118,10 @@ class NeuralNetwork:
         last_weight = self.total_layers - 2
 
         # Evaluate input layer (assigns input values to propogation array)
-        print("Evaluating input layer")
         for i in range(self.n_in - 1):
             self.prop_values[0][i] = inputs[i]
 
         # Evaluate hidden layers
-        print("Evaluating hidden layer(s)")
         for i in range(self.n_layers):  # for each hidden layer...
             for j in range(self.n_hidden):  # for each node...
                 signal = np.dot(self.weights[i][j, :],
@@ -131,7 +129,6 @@ class NeuralNetwork:
                 self.prop_values[i + 1][j] = self.clamp(signal)
 
         # Evaluate output layer
-        print("Evaluating output layer")
         for i in range(self.n_out):
             signal = np.dot(self.weights[last_weight - 1][i, :],
                             self.prop_values[last_layer - 1])
@@ -153,7 +150,6 @@ class NeuralNetwork:
         last_weight = self.total_layers - 2
 
         # Calculate output layer error
-        print("Evaluating output error")
         for i in range(self.n_out):
             error = template[i] - (self.prop_values[last_layer])[i]
             prev_value = self.prop_values[last_layer][i]
@@ -162,7 +158,6 @@ class NeuralNetwork:
                 error * self.grade(prev_value)
 
         # Calculate hidden layer error
-        print("Evaluating hidden layer error")
         for i in range(self.n_layers):  # for each hidden layer...
             if i == 0:
                 for j in range(self.n_hidden):
@@ -182,7 +177,6 @@ class NeuralNetwork:
                             error * self.grade(prev_value)
 
         # Update output weights
-        print("Adjusting output weights")
         for i in range(self.n_out):
             adjustment = self.error_values[last_layer][i] * \
                          self.prop_values[last_layer][i]
@@ -193,7 +187,6 @@ class NeuralNetwork:
             self.changes[last_weight][i] = adjustment
 
         # Update hidden weights
-        print("Adjusting hidden weights")
         for i in range(self.n_layers):  # for each hidden layer...
             for j in range(self.n_hidden):
                 layer_index = last_layer - (i + 1)
@@ -209,7 +202,6 @@ class NeuralNetwork:
                 self.changes[weight_index][j] = adjustment
 
         # Update input weights
-        print("Adjusting input weights")
         for i in range(self.n_hidden):
             adjustment = self.error_values[1][i] * \
                          self.prop_values[1][i]
@@ -248,7 +240,7 @@ class NeuralNetwork:
                 epoch: iterations (default is 2000)
         """
         for e in range(epoch):
-            for data_sets in len(training_data):
+            for data_sets in range(len(training_data)):
                 inputs = training_data[data_sets][0]
                 templates = training_data[data_sets][1]
 

@@ -1,0 +1,44 @@
+How Do I Play (2048-Python)?
+CS51 Final Project - Spring 2015
+
+Created by:
+Adama Atanase
+David Jeong
+Wei-Te Mark Ting
+
+A terminal-based 2048 game written in Python.
+Comes with pre-trained neural network AI and greedy AI.
+
+Runtime Requirements:
+ - Anaconda Python installation (http://continuum.io/downloads#py34)
+
+    OR
+
+ - Python 3 installation (preferably Anaconda x64)
+ - Scipy, Numpy libraries
+ -
+
+
+
+Example:
+    python runtime.py -a -n -l -v 2
+
+Arguments:
+    -a: Sets runtime to play 2048 with the AI
+
+    -g: Makes the AI play greedily.
+        [Presumes -a]
+
+    -d: Sets the search depth of the greedy AI.
+        [Presumes -g and -a]
+
+    -s: Sets the board RNG seeding (placement of 2's, 4's)
+
+    -l: Tells the runtime to log an AI run
+        [Presumes -a]
+
+    -v: Sets the verbosity of the output logs. Defaults to 1.
+        Options:
+            1 -- outputs move score and move count
+            2 -- outputs all of 1 as well as the actual board grid
+        [Presumes -a]
