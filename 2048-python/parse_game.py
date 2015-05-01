@@ -96,7 +96,7 @@ def parse_pair(pair):
             if value == 0:
                 neuron_arr.append(0)
             else:
-                neuron_arr.append(value, 2)/sum)
+                neuron_arr.append(log(value, 2)/sum)
     if pair[1] == 0:
         return (neuron_arr, [0,0,0,1])
     elif pair[1] == 1:
