@@ -69,3 +69,30 @@ def load_datafile(filename):
             if (i % 8 == 7):
                 tuple_arr.append((curr_board, parse_move(data[i])))
         return tuple_arr
+        
+        
+""" Parses a tuple array of (Board2048, move) pairs.
+
+    Returns tuples of input/output neuron states, compatible with the neuron
+    network.
+"""
+def parse_arr(tuple_arr):
+    
+    
+    
+""" Parses a tuple (Board2048, move) into input/output neuron states. """
+def _parse_pair(tuple):
+    neuron_arr = []
+    for i in gs:
+        for j in gs:
+            neuron_arr.append(tuple[0].grid[i][j])
+    if move == 0:
+        return (neuron_arr, [0,0,0,1])
+    elif move == 1:
+        return (neuron_arr, [0,0,1,0])
+    elif move == 2:
+        return (neuron_arr, [0,1,0,0])
+    elif move == 3:
+        return (neuron_arr, [1,0,0,0])
+    else:
+        raise ValueError("ERROR: Move must be 0, 1, 2, or 3")
