@@ -12,12 +12,10 @@ Comes with pre-trained neural network AI and greedy AI.
 Runtime Requirements:
  - Anaconda Python installation (http://continuum.io/downloads#py34)
 
-    OR
+    OR (if you want to install independently)
 
  - Python 3 installation (preferably Anaconda x64)
  - Scipy, Numpy libraries
- -
-
 
 
 Example:

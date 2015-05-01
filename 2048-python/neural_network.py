@@ -222,7 +222,7 @@ class NeuralNetwork:
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
 
-        assert len(weights_in) == self.total_layers, \
+        assert len(weights_in) == self.total_layers - 1, \
             "Provided weight list is of the wrong size!"
 
         self.weights = weights_in
@@ -245,7 +245,7 @@ class NeuralNetwork:
                 templates = training_data[data_sets][1]
 
                 self.propogate(inputs)
-                current_error = self.back_propogate(templates, 0.7, 0.5)
+                current_error = self.back_propogate(templates, 0.2, 0.1)
 
                 print("Stage:" + str(e))
                 print(current_error)
