@@ -1,4 +1,5 @@
 from game import *
+from math import log
 
 """ Parses a hexadecimal character into an Obj2048 """
 def parse_char(ch):
@@ -81,11 +82,11 @@ def parse_arr(tuple_arr):
     
     
 """ Parses a tuple (Board2048, move) into input/output neuron states. """
-def _parse_pair(tuple):
+def parse_pair(tuple):
     neuron_arr = []
     for i in gs:
         for j in gs:
-            neuron_arr.append(tuple[0].grid[i][j])
+            neuron_arr.append(log(tuple[0].grid[i][j], 2))
     if move == 0:
         return (neuron_arr, [0,0,0,1])
     elif move == 1:
