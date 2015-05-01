@@ -54,12 +54,16 @@ class Heuristics:
 
     # PLACEHOLDER -- NEED TO RETURN THE COORDINATES NOT THE NUMBER
     def max_val(array):
-        """ Return the value of the largest number on the board.
+        """ Returns the index of the maximum value in the array. """
 
-            DOES NOT YET:
-            location...in the form of a zero-indexed tuple (x, y)
-        """
-        return np.amax(array)
+        max_v = None
+        max_ind = -1
+        for i in range(len(array)):
+            if max_v is None or array[i] > max_v:
+                max_v = array[i]
+                max_ind = i
+
+        return max_ind
 
     def corner(grid, corner=0):
         """ Return a corner element (of a 2D grid).

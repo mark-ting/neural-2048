@@ -2,7 +2,7 @@
 
 from neural_network import NeuralNetwork as N
 from game import *
-from heuristics import *
+from heuristics import Heuristics as H
 from parse_game import *
 
 class NeuralAI:
@@ -20,8 +20,8 @@ class NeuralAI:
         if(self.board.game_over()):
             return -1
         # calculate AI's move
-        out = self.network.propogate(parse_pair((self.board,0))[0])
-        dir = out.index(max(out))
+        out = self.network.propogate(parse_pair((self.board, 0))[0])
+        dir = H.max_val(out)
         # try to move in that direction
         if(self.board.move(dir)):
             return dir
@@ -31,4 +31,3 @@ class NeuralAI:
                 return dir
         # should never happen
         raise RuntimeError("ERROR: No moves possible, but game not over")
-        

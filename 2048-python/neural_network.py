@@ -245,9 +245,9 @@ class NeuralNetwork:
                 templates = training_data[data_sets][1]
 
                 self.propogate(inputs)
-                current_error = self.back_propogate(templates, 0.5, 0.3)
+                current_error = self.back_propogate(templates, 0.7, 0.5)
 
-                if e % 200 == 0:
-                    print(current_error)
+                print("Stage:" + str(e))
+                print(current_error)
 
         return self.weights
