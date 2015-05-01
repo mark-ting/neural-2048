@@ -222,7 +222,7 @@ class NeuralNetwork:
             total_error += \
                 ((template[i] - self.prop_values[last_layer][i]) ** 2) / 2
 
-
+        return total_error
 
     def load_weights(self, weights_in):
         """ Load weights from a provided file into the neural network """
@@ -235,20 +235,24 @@ class NeuralNetwork:
     def set_bias(self, bias):
         (self.prop_values[0])[self.n_in - 1] = bias
 
-    def train(self, training_data, epoch, starting_weights=None):
+    def train(self, training_data, epoch=2000, starting_weights=None):
         """ Train the neural network using provided training data.
+            Print current error every
             Return the weight matrix of the "trained" network.
 
             Args:
                 training_data: tuples of (inputs, outputs) used
-                epoch: iteration length
+                epoch: iterations (default is 2000)
         """
         for e in range(epoch):
             for data_sets in len(training_data):
                 inputs = training_data[data_sets][0]
                 templates = training_data[data_sets][1]
 
-            self.propogate(inputs)
-            self.back_propogate(templates, 0.5, 0.3)
+                self.propogate(inputs)
+                current_error = self.back_propogate(templates, 0.5, 0.3)
+
+                if e % 200 == 0:
+                    print(current_error)
 
         return self.weights
